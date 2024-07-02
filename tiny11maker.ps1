@@ -439,6 +439,15 @@ if ([System.IO.Directory]::Exists($ADKDepTools)) {
 
 & "$OSCDIMG" '-m' '-o' '-u2' '-udfver102' "-bootdata:2#p0,e,b$ScratchDisk\tiny11\boot\etfsboot.com#pEF,e,b$ScratchDisk\tiny11\efi\microsoft\boot\efisys.bin" "$ScratchDisk\tiny11" "$PSScriptRoot\tiny11.iso"
 
+# Update winget using Microsoft Store
+Write-Host "Updating winget..."
+Start-Process -FilePath "powershell" -ArgumentList "Start-Process ms-windows-store://pdp/?productid=9nblggh4nns1 -Wait" -Wait
+Write-Host "Enabling .NET 3.5 support..."
+DISM /Online /Enable-Feature /FeatureName:NetFx3 /All /LimitAccess /Source:X:\sources\sxs
+Write-Host "Running custom software installation script with winget..."
+Start-Process powershell -ArgumentList "-File install_software_winget.ps1" -Wait
+Write-Host "Custom installation complete."
+
 # Finishing up
 Write-Host "Creation completed! Press any key to exit the script..."
 Read-Host "Press Enter to continue"
